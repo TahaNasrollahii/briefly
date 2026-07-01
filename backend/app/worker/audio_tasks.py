@@ -51,8 +51,12 @@ def chunk_audio(self, event_payload: dict):
             end = min((i + 1) * chunk_length_ms, len(audio))
             chunk = audio[start:end]
             
-            chunk_path = f"uploads/{job_id}_chunk_{i}.wav"
-            chunk.export(chunk_path, format="wav")
+            # Whisper models internally use 16kHz mono.
+            # Downsampling and compressing to MP3 drastically reduces file size and upload time without losing transcription quality.
+            chunk = chunk.set_frame_rate(16000).set_channels(1)
+            
+            chunk_path = f"uploads/{job_id}_chunk_{i}.mp3"
+            chunk.export(chunk_path, format="mp3", bitrate="64k")
             
             chunk_records.append({
                 "job_id": job_id,
