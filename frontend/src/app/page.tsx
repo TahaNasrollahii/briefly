@@ -247,7 +247,7 @@ export default function Dashboard() {
                         <p className="text-sm text-slate-400 mt-1" dir="ltr">{new Date(job.created_at).toLocaleString()}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end gap-4 mt-8 sm:mt-0">
+                    <div className="flex items-center justify-end w-full sm:w-auto gap-4 mt-6 sm:mt-0">
                       <div className="flex items-center min-w-[140px] justify-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10">
                         <span className="capitalize text-sm font-medium text-slate-200">{t(job.status) || job.status}</span>
                         <StatusIcon status={job.status} />

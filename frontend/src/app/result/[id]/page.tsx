@@ -165,9 +165,9 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-3xl font-bold text-white tracking-tight">{t('key_highlights')}</h2>
                 </div>
-                <ul className="space-y-4 mt-6">
+                <ul className="space-y-2 mt-6">
                   {bullet_points?.map((bp: string, i: number) => (
-                    <li key={i} className="flex gap-5 text-slate-300 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5 group">
+                    <li key={i} className="flex gap-5 text-slate-300 py-2 px-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5 group">
                       <span className="text-purple-400 mt-1 flex-shrink-0 group-hover:scale-125 transition-transform"><Sparkles className="w-5 h-5"/></span>
                       <span className="leading-relaxed">{bp}</span>
                     </li>
@@ -205,7 +205,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-2xl font-bold text-white tracking-tight">{t('action_items')}</h2>
                 </div>
-                <ul className="space-y-3 mt-6">
+                <ul className="space-y-1 mt-6">
                   {action_items?.map((item: string, i: number) => (
                     <li key={i} className="flex gap-4 text-slate-200 bg-black/40 p-4 rounded-xl border border-white/5 hover:border-orange-500/30 transition-colors group">
                       <div className="w-5 h-5 rounded-full border-2 border-orange-400/50 mt-0.5 shrink-0 group-hover:bg-orange-500/20 transition-colors" />
@@ -224,9 +224,9 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-2xl font-bold text-white tracking-tight">{t('decisions_made')}</h2>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-1 mt-6">
                   {decisions?.map((dec: string, i: number) => (
-                    <li key={i} className="text-sm text-slate-300 flex gap-3 items-start p-3 hover:bg-white/5 rounded-lg transition-colors">
+                    <li key={i} className="text-sm text-slate-300 flex gap-3 items-start py-1.5 px-3 hover:bg-white/5 rounded-lg transition-colors">
                       <span className="text-red-400 shrink-0 mt-0.5">{isRTL ? '←' : '→'}</span> 
                       <span className="leading-relaxed">{dec}</span>
                     </li>
