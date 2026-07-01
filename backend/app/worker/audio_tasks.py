@@ -1,7 +1,7 @@
 import os
 import math
 from pydub import AudioSegment
-import whisper
+from groq import Groq
 import asyncio
 from sqlalchemy.future import select
 from app.worker.celery_app import celery_app
@@ -10,13 +10,7 @@ from app.db.models import ProcessingJob, AudioChunk, Transcript
 from app.rabbitmq import rabbitmq_client
 from app.core.config import settings
 
-# Load whisper model globally for the worker to avoid reloading
-try:
-    print(f"Loading Whisper model: {settings.WHISPER_MODEL}")
-    model = whisper.load_model(settings.WHISPER_MODEL)
-except Exception as e:
-    print(f"Error loading whisper model: {e}")
-    model = None
+client = Groq(api_key=settings.GROQ_API_KEY)
 
 async def update_job_status(job_id: str, status: str, progress: float):
     async with AsyncSessionLocal() as session:
@@ -101,8 +95,12 @@ def transcribe_chunk(self, event_payload: dict):
     loop.run_until_complete(update_job_status(job_id, "transcribing", 30.0))
     
     try:
-        result = model.transcribe(file_path)
-        transcript_text = result["text"]
+        with open(file_path, "rb") as file:
+            transcription = client.audio.transcriptions.create(
+                file=(file_path, file.read()),
+                model="whisper-large-v3",
+            )
+        transcript_text = transcription.text
         
         async def save_transcript():
             async with AsyncSessionLocal() as session:
