@@ -41,19 +41,19 @@ Inside BOTH "en" and "fa", provide the exact same structure translated into thei
 {{
   "en": {{
     "title": "A short, descriptive title for the meeting (max 6 words).",
-    "summary": "A concise paragraph summarizing the transcript.",
-    "bullet_points": ["Key highlight 1", "Key highlight 2"],
-    "action_items": ["Action 1", "Action 2"],
-    "decisions": ["Decision 1", "Decision 2"],
-    "topics": ["Topic 1", "Topic 2"]
+    "summary": "A comprehensive and detailed summary of the transcript, providing meaningful insights, context, and practical value (at least 2-3 paragraphs).",
+    "bullet_points": ["Detailed key highlight 1", "Detailed key highlight 2", "Detailed key highlight 3", "Detailed key highlight 4"],
+    "action_items": ["Specific Action 1 with owner if mentioned", "Specific Action 2 with owner if mentioned"],
+    "decisions": ["Detailed Decision 1", "Detailed Decision 2"],
+    "topics": ["Specific Topic 1", "Specific Topic 2", "Specific Topic 3"]
   }},
   "fa": {{
     "title": "یک عنوان کوتاه و توصیفی برای جلسه (حداکثر ۶ کلمه).",
-    "summary": "یک پاراگراف خلاصه از متن.",
-    "bullet_points": ["نکته کلیدی ۱", "نکته کلیدی ۲"],
-    "action_items": ["اقدام ۱", "اقدام ۲"],
-    "decisions": ["تصمیم ۱", "تصمیم ۲"],
-    "topics": ["موضوع ۱", "موضوع ۲"]
+    "summary": "یک خلاصه جامع و دقیق از متن، با ارائه بینش‌های معنادار، زمینه و ارزش عملی (حداقل ۲ تا ۳ پاراگراف).",
+    "bullet_points": ["نکته کلیدی دقیق ۱", "نکته کلیدی دقیق ۲", "نکته کلیدی دقیق ۳", "نکته کلیدی دقیق ۴"],
+    "action_items": ["اقدام مشخص ۱ با ذکر مسئول در صورت وجود", "اقدام مشخص ۲ با ذکر مسئول در صورت وجود"],
+    "decisions": ["تصمیم دقیق ۱", "تصمیم دقیق ۲"],
+    "topics": ["موضوع مشخص ۱", "موضوع مشخص ۲", "موضوع مشخص ۳"]
   }}
 }}
 Return ONLY valid JSON. No markdown formatting, no explanations.
