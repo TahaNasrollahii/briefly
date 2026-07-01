@@ -94,12 +94,16 @@ def transcribe_chunk(self, event_payload: dict):
     loop.run_until_complete(update_job_status(job_id, "transcribing", 30.0))
     
     try:
+        import requests
         with open(file_path, "rb") as file:
-            transcription = client.audio.transcriptions.create(
-                file=(file_path, file.read()),
-                model="whisper-large-v3",
+            res = requests.post(
+                "https://api.groq.com/openai/v1/audio/transcriptions",
+                headers={"Authorization": f"Bearer {settings.GROQ_API_KEY}"},
+                files={"file": (file_path, file.read())},
+                data={"model": "whisper-large-v3"}
             )
-        transcript_text = transcription.text
+            res.raise_for_status()
+            transcript_text = res.json().get("text", "")
         
         async def save_transcript():
             async with AsyncSessionLocal() as session:

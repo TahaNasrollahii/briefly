@@ -63,7 +63,7 @@ def generate_summary(self, event_payload: dict):
                     "content": prompt,
                 }
             ],
-            model="llama3-70b-8192", # Default to a powerful llama3 model on groq
+            model="llama-3.3-70b-versatile", # Current recommended Groq model
             response_format={"type": "json_object"}
         )
         
