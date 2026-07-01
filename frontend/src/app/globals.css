@@ -6,22 +6,42 @@
 }
 
 :root {
-  --background: #0f172a; /* slate-900 */
-  --foreground: #f8fafc; /* slate-50 */
+  --background: #09090b; /* zinc-950 for deeper contrast */
+  --foreground: #fafafa;
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
-  background-attachment: fixed;
+  background-color: var(--background);
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Base animated background layer */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+  z-index: -1;
+  animation: pulseBg 15s ease-in-out infinite alternate;
+}
+
+@keyframes pulseBg {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .font-fa {
+    font-family: var(--font-vazirmatn), sans-serif;
   }
 }
