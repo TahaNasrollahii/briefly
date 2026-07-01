@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { GlassCard } from '../../../components/GlassCard';
+import { GlassCard } from '../../../../components/GlassCard';
 import { FileText, ListChecks, MessageSquare, Tag, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ResultPage({ params }: { params: { id: string } }) {
+export default function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const { id } = params;
+  const { id } = React.use(params);
 
   useEffect(() => {
     const fetchResult = async () => {

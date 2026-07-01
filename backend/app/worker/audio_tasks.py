@@ -70,10 +70,9 @@ def chunk_audio(self, event_payload: dict):
                 await session.commit()
                 
                 for c in chunk_records:
-                    await rabbitmq_client.publish(
-                        "processing.exchange",
-                        "audio.chunked",
-                        {"job_id": job_id, "chunk_index": c["chunk_index"], "file_path": c["file_path"]}
+                    celery_app.send_task(
+                        "app.worker.audio_tasks.transcribe_chunk",
+                        kwargs={"event_payload": {"job_id": job_id, "chunk_index": c["chunk_index"], "file_path": c["file_path"]}}
                     )
                     
                 # Publish the completion of chunking to trigger merging eventually
@@ -119,10 +118,9 @@ def transcribe_chunk(self, event_payload: dict):
                 all_chunks = res_all.scalars().all()
                 if all(c.status == "completed" for c in all_chunks):
                     # Trigger merge
-                    await rabbitmq_client.publish(
-                        "processing.exchange",
-                        "audio.transcribed",
-                        {"job_id": job_id}
+                    celery_app.send_task(
+                        "app.worker.audio_tasks.merge_transcripts",
+                        kwargs={"event_payload": {"job_id": job_id}}
                     )
                     
         loop.run_until_complete(save_transcript())
@@ -154,10 +152,9 @@ def merge_transcripts(self, event_payload: dict):
                 session.add(t)
                 await session.commit()
                 
-                await rabbitmq_client.publish(
-                    "processing.exchange",
-                    "audio.merged",
-                    {"job_id": job_id, "full_text": full_text}
+                celery_app.send_task(
+                    "app.worker.ai_tasks.generate_summary",
+                    kwargs={"event_payload": {"job_id": job_id, "full_text": full_text}}
                 )
                 
         loop.run_until_complete(merge())

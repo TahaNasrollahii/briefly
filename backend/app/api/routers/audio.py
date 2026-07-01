@@ -7,6 +7,7 @@ import aiofiles
 from app.db.session import get_db
 from app.db.models import AudioFile, ProcessingJob, Transcript, Summary
 from app.rabbitmq import rabbitmq_client
+from app.worker.celery_app import celery_app
 from app.core.config import settings
 
 router = APIRouter()
@@ -20,8 +21,8 @@ async def upload_audio(
     if file.size and file.size > settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File too large. Max size is 50MB.")
         
-    allowed_types = ["audio/mpeg", "audio/wav", "audio/mp4", "audio/x-m4a"]
-    if file.content_type not in allowed_types and not file.filename.endswith(('.mp3', '.wav', '.m4a')):
+    allowed_types = ["audio/mpeg", "audio/wav", "audio/mp4", "audio/x-m4a", "audio/ogg", "audio/opus", "application/ogg"]
+    if file.content_type not in allowed_types and not file.filename.lower().endswith(('.mp3', '.wav', '.m4a', '.ogg', '.opus')):
          raise HTTPException(status_code=400, detail="Invalid file type.")
 
     # Create db records
@@ -61,10 +62,9 @@ async def upload_audio(
     }
     
     background_tasks.add_task(
-        rabbitmq_client.publish,
-        "audio.exchange",
-        "audio.uploaded",
-        event_payload
+        celery_app.send_task,
+        "app.worker.audio_tasks.chunk_audio",
+        kwargs={"event_payload": event_payload}
     )
 
     return {"job_id": job.id, "status": "uploaded", "message": "File uploaded successfully."}

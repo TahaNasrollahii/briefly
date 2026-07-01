@@ -80,11 +80,11 @@ export default function Dashboard() {
             <UploadCloud className="w-10 h-10 text-blue-400" />
           </div>
           <h2 className="text-2xl font-semibold">Upload Audio</h2>
-          <p className="text-slate-400 text-sm">MP3, WAV, M4A up to 50MB</p>
+          <p className="text-slate-400 text-sm">MP3, WAV, M4A, OGG up to 50MB</p>
           
           <input
             type="file"
-            accept=".mp3,.wav,.m4a,audio/*"
+            accept=".mp3,.wav,.m4a,.ogg,.opus,audio/*"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
             className="hidden"
             id="audio-upload"
