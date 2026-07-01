@@ -32,8 +32,27 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
   const isRTL = lang === 'fa';
 
   const toggleAction = (index: number) => {
-    setDoneActions(prev => ({ ...prev, [index]: !prev[index] }));
+    setDoneActions(prev => {
+      const next = { ...prev, [index]: !prev[index] };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`briefly_actions_${id}`, JSON.stringify(next));
+      }
+      return next;
+    });
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && id) {
+      const saved = localStorage.getItem(`briefly_actions_${id}`);
+      if (saved) {
+        try {
+          setDoneActions(JSON.parse(saved));
+        } catch (e) {
+          console.error("Failed to parse saved actions");
+        }
+      }
+    }
+  }, [id]);
 
   const copySummary = async () => {
     if (!aiData?.summary) return;
