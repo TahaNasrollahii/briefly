@@ -34,26 +34,31 @@ def generate_summary(self, event_payload: dict):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(update_job_status(job_id, "summarizing", 80.0))
     
-    prompt = f"""
-    Analyze the following transcript and extract:
-    1. A concise overall summary.
-    2. Key bullet points.
-    3. Action items (who does what).
-    4. Key decisions.
-    5. Main topic classification.
+    prompt = f"""You are a highly capable AI assistant that analyzes meeting transcripts.
+Analyze the following transcript and provide a structured JSON response. 
+The JSON must contain two top-level keys: "en" for English and "fa" for Persian (Farsi).
+Inside BOTH "en" and "fa", provide the exact same structure translated into their respective languages:
+{{
+  "en": {{
+    "summary": "A concise paragraph summarizing the transcript.",
+    "bullet_points": ["Key highlight 1", "Key highlight 2"],
+    "action_items": ["Action 1", "Action 2"],
+    "decisions": ["Decision 1", "Decision 2"],
+    "topics": ["Topic 1", "Topic 2"]
+  }},
+  "fa": {{
+    "summary": "یک پاراگراف خلاصه از متن.",
+    "bullet_points": ["نکته کلیدی ۱", "نکته کلیدی ۲"],
+    "action_items": ["اقدام ۱", "اقدام ۲"],
+    "decisions": ["تصمیم ۱", "تصمیم ۲"],
+    "topics": ["موضوع ۱", "موضوع ۲"]
+  }}
+}}
+Return ONLY valid JSON. No markdown formatting, no explanations.
 
-    Respond ONLY with a valid JSON object matching this schema:
-    {{
-        "summary": "...",
-        "bullet_points": ["...", "..."],
-        "action_items": ["...", "..."],
-        "decisions": ["...", "..."],
-        "topics": ["...", "..."]
-    }}
-
-    Transcript:
-    {full_text[:30000]} # Limit to avoid context window explosion
-    """
+Transcript:
+{full_text[:30000]} # Limit to avoid context window explosion
+"""
     
     try:
         completion = client.chat.completions.create(

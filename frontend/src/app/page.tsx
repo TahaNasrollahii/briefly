@@ -218,7 +218,7 @@ export default function Dashboard() {
               {currentJobs.map((job) => (
                 <motion.div key={job.job_id} variants={itemVariants} layout>
                   <GlassCard 
-                    className="p-6 flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group"
+                    className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group"
                     onClick={() => router.push(job.status === 'completed' ? `/result/${job.job_id}` : `/job/${job.job_id}`)}
                   >
                     <div className="flex items-center gap-5">
@@ -230,7 +230,7 @@ export default function Dashboard() {
                         <p className="text-sm text-slate-400 mt-1" dir="ltr">{new Date(job.created_at).toLocaleString()}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 mt-4 sm:mt-0 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                    <div className="flex items-center min-w-[140px] justify-center self-start sm:self-auto gap-3 mt-6 sm:mt-0 px-4 py-2 rounded-full bg-white/5 border border-white/10">
                       <span className="capitalize text-sm font-medium text-slate-200">{t(job.status) || job.status}</span>
                       <StatusIcon status={job.status} />
                     </div>

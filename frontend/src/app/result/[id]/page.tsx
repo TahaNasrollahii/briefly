@@ -71,7 +71,8 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
     );
   }
 
-  const { summary, bullet_points, action_items, decisions, topics } = data.structured_data;
+  const aiData = data.structured_data[lang] || data.structured_data;
+  const { summary, bullet_points, action_items, decisions, topics } = aiData;
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-8 pt-24 min-h-screen relative">
@@ -152,7 +153,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-3xl font-bold text-white tracking-tight">{t('full_transcript')}</h2>
                 </div>
-                <div className="max-h-[500px] overflow-y-auto pr-6 text-sm text-slate-400 leading-loose space-y-4 custom-scrollbar">
+                <div className="max-h-[500px] overflow-y-auto pr-6 text-sm text-slate-400 leading-loose space-y-4 custom-scrollbar font-fa" dir="rtl">
                   {data.transcript.split('\n').map((para: string, i: number) => (
                     <p key={i}>{para}</p>
                   ))}
@@ -173,7 +174,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-2xl font-bold text-white tracking-tight">{t('action_items')}</h2>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-3 mt-6">
                   {action_items?.map((item: string, i: number) => (
                     <li key={i} className="flex gap-4 text-slate-200 bg-black/40 p-4 rounded-xl border border-white/5 hover:border-orange-500/30 transition-colors group">
                       <div className="w-5 h-5 rounded-full border-2 border-orange-400/50 mt-0.5 shrink-0 group-hover:bg-orange-500/20 transition-colors" />
@@ -211,7 +212,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-2xl font-bold text-white tracking-tight">{t('topics')}</h2>
                 </div>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-2.5 mt-6">
                   {topics?.map((topic: string, i: number) => (
                     <span key={i} className="text-sm px-4 py-1.5 bg-blue-500/10 text-blue-200 border border-blue-500/20 rounded-full hover:bg-blue-500/20 hover:border-blue-500/40 transition-colors cursor-default">
                       {topic}
