@@ -103,17 +103,27 @@ async def get_result(job_id: str, db: AsyncSession = Depends(get_db)):
 
 @router.get("/list")
 async def list_jobs(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ProcessingJob).order_by(ProcessingJob.created_at.desc()))
-    jobs = result.scalars().all()
+    result = await db.execute(
+        select(ProcessingJob, Summary)
+        .outerjoin(Summary, ProcessingJob.id == Summary.job_id)
+        .order_by(ProcessingJob.created_at.desc())
+    )
+    rows = result.all()
     
-    return [
-        {
+    jobs_response = []
+    for job, summary in rows:
+        title = None
+        if summary and summary.structured_data:
+            title = summary.structured_data
+            
+        jobs_response.append({
             "job_id": job.id,
             "status": job.status,
             "progress": job.progress,
-            "created_at": job.created_at
-        } for job in jobs
-    ]
+            "created_at": job.created_at,
+            "structured_data": title
+        })
+    return jobs_response
 
 @router.delete("/{job_id}")
 async def delete_job(job_id: str, db: AsyncSession = Depends(get_db)):
@@ -122,6 +132,17 @@ async def delete_job(job_id: str, db: AsyncSession = Depends(get_db)):
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
         
+    audio_file_id = job.audio_file_id
+    
     await db.delete(job)
+    
+    if audio_file_id:
+        result_af = await db.execute(select(AudioFile).where(AudioFile.id == audio_file_id))
+        af = result_af.scalar_one_or_none()
+        if af:
+            if os.path.exists(af.file_path):
+                os.remove(af.file_path)
+            await db.delete(af)
+
     await db.commit()
     return {"message": "Job deleted"}

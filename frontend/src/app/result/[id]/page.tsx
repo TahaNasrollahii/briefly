@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from '../../../../components/GlassCard';
-import { FileText, ListChecks, MessageSquare, Tag, ArrowLeft, ArrowRight, Lightbulb, Workflow, Sparkles } from 'lucide-react';
+import { FileText, ListChecks, MessageSquare, Tag, ArrowLeft, ArrowRight, Lightbulb, Workflow, Sparkles, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../../../context/LanguageContext';
 
@@ -25,7 +26,22 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
   const [loading, setLoading] = useState(true);
   const { id } = React.use(params);
   const { t, lang } = useLanguage();
+  const router = useRouter();
   const isRTL = lang === 'fa';
+
+  const handleDelete = async () => {
+    if (!confirm(lang === 'fa' ? "آیا از حذف این مورد اطمینان دارید؟" : "Are you sure you want to delete this job?")) return;
+    try {
+      const res = await fetch(`http://localhost:8000/api/audio/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        router.push('/');
+      }
+    } catch (e) {
+      console.error("Delete failed");
+    }
+  };
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -72,7 +88,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
   }
 
   const aiData = data.structured_data[lang] || data.structured_data;
-  const { summary, bullet_points, action_items, decisions, topics } = aiData;
+  const { title, summary, bullet_points, action_items, decisions, topics } = aiData;
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-8 pt-24 min-h-screen relative">
@@ -98,14 +114,29 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
                 <span className="text-xs font-medium text-blue-300 uppercase tracking-wider">{t('processed_report')}</span>
               </div>
-              <h1 className={`text-4xl sm:text-5xl font-extrabold tracking-tight text-white ${isRTL ? 'flex flex-row-reverse gap-3 justify-end' : ''}`}>
-                <span>{t('intel')}</span>
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('brief')}</span>
+              <h1 className={`text-3xl sm:text-4xl font-extrabold tracking-tight text-white ${isRTL ? 'flex flex-row-reverse gap-3 justify-end' : ''}`}>
+                {title ? (
+                  <span>{title}</span>
+                ) : (
+                  <>
+                    <span>{t('intel')}</span>
+                    <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent ml-2">{t('brief')}</span>
+                  </>
+                )}
               </h1>
             </div>
           </div>
-          <div className="text-sm text-slate-500 font-mono bg-black/40 px-4 py-2 rounded-xl border border-white/5 backdrop-blur-sm" dir="ltr">
-            ID: {id.slice(0,12)}...
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-slate-500 font-mono bg-black/40 px-4 py-2 rounded-xl border border-white/5 backdrop-blur-sm" dir="ltr">
+              ID: {id.slice(0,12)}...
+            </div>
+            <button 
+              onClick={handleDelete}
+              className="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
+              title="Delete Job"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
           </div>
         </motion.div>
         
@@ -122,7 +153,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-3xl font-bold text-white tracking-tight">{t('exec_summary')}</h2>
                 </div>
-                <p className="text-slate-300 leading-relaxed text-lg font-light">{summary}</p>
+                <p className="text-slate-300 leading-relaxed text-lg font-light mt-6">{summary}</p>
               </GlassCard>
             </motion.div>
 
@@ -153,7 +184,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   </div>
                   <h2 className="text-3xl font-bold text-white tracking-tight">{t('full_transcript')}</h2>
                 </div>
-                <div className="max-h-[500px] overflow-y-auto pr-6 text-sm text-slate-400 leading-loose space-y-4 custom-scrollbar font-fa" dir="rtl">
+                <div className="max-h-[500px] overflow-y-auto pr-6 text-sm text-slate-400 leading-loose space-y-4 custom-scrollbar font-fa mt-6" dir="rtl">
                   {data.transcript.split('\n').map((para: string, i: number) => (
                     <p key={i}>{para}</p>
                   ))}

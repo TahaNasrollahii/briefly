@@ -40,6 +40,7 @@ The JSON must contain two top-level keys: "en" for English and "fa" for Persian 
 Inside BOTH "en" and "fa", provide the exact same structure translated into their respective languages:
 {{
   "en": {{
+    "title": "A short, descriptive title for the meeting (max 6 words).",
     "summary": "A concise paragraph summarizing the transcript.",
     "bullet_points": ["Key highlight 1", "Key highlight 2"],
     "action_items": ["Action 1", "Action 2"],
@@ -47,6 +48,7 @@ Inside BOTH "en" and "fa", provide the exact same structure translated into thei
     "topics": ["Topic 1", "Topic 2"]
   }},
   "fa": {{
+    "title": "یک عنوان کوتاه و توصیفی برای جلسه (حداکثر ۶ کلمه).",
     "summary": "یک پاراگراف خلاصه از متن.",
     "bullet_points": ["نکته کلیدی ۱", "نکته کلیدی ۲"],
     "action_items": ["اقدام ۱", "اقدام ۲"],

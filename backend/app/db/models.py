@@ -27,9 +27,9 @@ class ProcessingJob(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     audio_file = relationship("AudioFile", back_populates="job")
-    chunks = relationship("AudioChunk", back_populates="job")
-    transcript = relationship("Transcript", back_populates="job", uselist=False)
-    summary = relationship("Summary", back_populates="job", uselist=False)
+    chunks = relationship("AudioChunk", back_populates="job", cascade="all, delete-orphan")
+    transcript = relationship("Transcript", back_populates="job", uselist=False, cascade="all, delete-orphan")
+    summary = relationship("Summary", back_populates="job", uselist=False, cascade="all, delete-orphan")
 
 class AudioChunk(Base):
     __tablename__ = "audio_chunks"
