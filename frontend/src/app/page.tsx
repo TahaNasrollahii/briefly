@@ -233,31 +233,36 @@ export default function Dashboard() {
               {currentJobs.map((job) => (
                 <motion.div key={job.job_id} variants={itemVariants} layout>
                   <GlassCard 
-                    className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group"
+                    className="p-6 flex flex-col gap-4 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group"
                     onClick={() => router.push(job.status === 'completed' ? `/result/${job.job_id}` : `/job/${job.job_id}`)}
                   >
-                    <div className="flex items-center gap-5">
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10 group-hover:bg-blue-500/10 group-hover:border-blue-500/30 transition-colors">
+                    {/* Row 1: Icon + Title */}
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white/5 rounded-xl border border-white/10 group-hover:bg-blue-500/10 group-hover:border-blue-500/30 transition-colors shrink-0">
                         <FileAudio className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
                       </div>
-                      <div>
-                        <p className="font-semibold text-white text-lg tracking-tight">
-                          {job.structured_data?.[lang]?.title || `${t('job')} ${job.job_id.slice(0, 8)}`}
-                        </p>
-                        <p className="text-sm text-slate-400 mt-1" dir="ltr">{new Date(job.created_at).toLocaleString()}</p>
-                      </div>
+                      <p className="font-semibold text-white text-lg tracking-tight truncate">
+                        {job.structured_data?.[lang]?.title || `${t('job')} ${job.job_id.slice(0, 8)}`}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-end w-full sm:w-auto gap-4 mt-6 sm:mt-0">
-                      <div className="flex items-center min-w-[140px] justify-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-                        <span className="capitalize text-sm font-medium text-slate-200">{t(job.status) || job.status}</span>
-                        <StatusIcon status={job.status} />
+
+                    {/* Row 2: Date (left) + Status + Trash (right) — always same horizontal line */}
+                    <div className="flex items-center justify-between gap-4 pl-1">
+                      <p className="text-sm text-slate-400" dir="ltr">
+                        {new Date(job.created_at).toLocaleString()}
+                      </p>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+                          <span className="capitalize text-sm font-medium text-slate-200">{t(job.status) || job.status}</span>
+                          <StatusIcon status={job.status} />
+                        </div>
+                        <button 
+                          onClick={(e) => handleDelete(e, job.job_id)}
+                          className="p-2 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      <button 
-                        onClick={(e) => handleDelete(e, job.job_id)}
-                        className="p-2.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
                     </div>
                   </GlassCard>
                 </motion.div>
