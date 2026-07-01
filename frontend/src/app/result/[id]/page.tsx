@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from '../../../../components/GlassCard';
-import { FileText, ListChecks, MessageSquare, Tag, ArrowLeft, ArrowRight, Lightbulb, Workflow, Sparkles, Trash2 } from 'lucide-react';
+import { FileText, ListChecks, MessageSquare, Tag, ArrowLeft, ArrowRight, Lightbulb, Workflow, Sparkles, Trash2, Check, Copy, CheckCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -24,10 +24,27 @@ const itemVariants = {
 export default function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [doneActions, setDoneActions] = useState<Record<number, boolean>>({});
+  const [copiedSummary, setCopiedSummary] = useState(false);
   const { id } = React.use(params);
   const { t, lang } = useLanguage();
   const router = useRouter();
   const isRTL = lang === 'fa';
+
+  const toggleAction = (index: number) => {
+    setDoneActions(prev => ({ ...prev, [index]: !prev[index] }));
+  };
+
+  const copySummary = async () => {
+    if (!aiData?.summary) return;
+    try {
+      await navigator.clipboard.writeText(aiData.summary);
+      setCopiedSummary(true);
+      setTimeout(() => setCopiedSummary(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm(lang === 'fa' ? "آیا از حذف این مورد اطمینان دارید؟" : "Are you sure you want to delete this job?")) return;
@@ -127,9 +144,6 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-500 font-mono bg-black/40 px-4 py-2 rounded-xl border border-white/5 backdrop-blur-sm" dir="ltr">
-              ID: {id.slice(0,12)}...
-            </div>
             <button 
               onClick={handleDelete}
               className="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
@@ -147,11 +161,20 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
             
             <motion.div variants={itemVariants}>
               <GlassCard className="p-8 sm:p-10 space-y-6">
-                <div className="flex items-center gap-4 text-blue-400">
-                  <div className="p-3 bg-blue-500/10 rounded-xl">
-                    <FileText className="w-7 h-7" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-blue-400">
+                    <div className="p-3 bg-blue-500/10 rounded-xl">
+                      <FileText className="w-7 h-7" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white tracking-tight">{t('exec_summary')}</h2>
                   </div>
-                  <h2 className="text-3xl font-bold text-white tracking-tight">{t('exec_summary')}</h2>
+                  <button
+                    onClick={copySummary}
+                    className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/5 transition-all flex items-center justify-center group"
+                    title={lang === 'fa' ? "کپی کردن خلاصه" : "Copy Summary"}
+                  >
+                    {copiedSummary ? <CheckCheck className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />}
+                  </button>
                 </div>
                 <p className="text-slate-300 leading-relaxed text-lg font-light mt-6">{summary}</p>
               </GlassCard>
@@ -206,12 +229,21 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                   <h2 className="text-2xl font-bold text-white tracking-tight">{t('action_items')}</h2>
                 </div>
                 <ul className="space-y-1 mt-6">
-                  {action_items?.map((item: string, i: number) => (
-                    <li key={i} className="flex gap-4 text-slate-200 bg-black/40 p-4 rounded-xl border border-white/5 hover:border-orange-500/30 transition-colors group">
-                      <div className="w-5 h-5 rounded-full border-2 border-orange-400/50 mt-0.5 shrink-0 group-hover:bg-orange-500/20 transition-colors" />
-                      <span className="text-sm leading-relaxed">{item}</span>
-                    </li>
-                  ))}
+                  {action_items?.map((item: string, i: number) => {
+                    const isDone = doneActions[i];
+                    return (
+                      <li 
+                        key={i} 
+                        onClick={() => toggleAction(i)}
+                        className={`flex gap-4 text-slate-200 bg-black/40 p-4 rounded-xl border border-white/5 hover:border-orange-500/30 transition-colors group cursor-pointer ${isDone ? 'opacity-50' : ''}`}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 border-orange-400/50 mt-0.5 shrink-0 transition-colors flex items-center justify-center ${isDone ? 'bg-orange-500 border-orange-500' : 'group-hover:bg-orange-500/20'}`}>
+                          {isDone && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <span className={`text-sm leading-relaxed transition-all ${isDone ? 'line-through text-slate-400' : ''}`}>{item}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </GlassCard>
             </motion.div>

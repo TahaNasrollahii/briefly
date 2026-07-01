@@ -56,6 +56,9 @@ Inside BOTH "en" and "fa", provide the exact same structure translated into thei
     "topics": ["موضوع مشخص ۱", "موضوع مشخص ۲", "موضوع مشخص ۳"]
   }}
 }}
+
+CRITICAL INSTRUCTION: For the "fa" section, you MUST use ONLY pure Persian (Farsi) language. Do NOT use or hallucinate words from other languages (like Russian, Spanish, Chinese, Vietnamese, etc.) mixed into the Persian text. The Persian translation must be completely natural and grammatically correct.
+
 Return ONLY valid JSON. No markdown formatting, no explanations.
 
 Transcript:
